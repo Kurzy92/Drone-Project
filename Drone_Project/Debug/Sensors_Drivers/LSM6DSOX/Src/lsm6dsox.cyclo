@@ -1,0 +1,7 @@
+../Sensors_Drivers/LSM6DSOX/Src/lsm6dsox.c:15:9:LSM6DSOX_I2C_init	3
+../Sensors_Drivers/LSM6DSOX/Src/lsm6dsox.c:80:19:LSM6DSOX_I2C_ReadTemp	2
+../Sensors_Drivers/LSM6DSOX/Src/lsm6dsox.c:112:19:LSM6DSOX_I2C_ReadAccel	2
+../Sensors_Drivers/LSM6DSOX/Src/lsm6dsox.c:132:19:LSM6DSOX_I2C_ReadGyro	2
+../Sensors_Drivers/LSM6DSOX/Src/lsm6dsox.c:158:19:LSM6DSOX_I2C_ReadRegister	1
+../Sensors_Drivers/LSM6DSOX/Src/lsm6dsox.c:163:19:LSM6DSOX_I2C_ReadRegisters	1
+../Sensors_Drivers/LSM6DSOX/Src/lsm6dsox.c:168:19:LSM6DSOX_I2C_WriteRegister	1

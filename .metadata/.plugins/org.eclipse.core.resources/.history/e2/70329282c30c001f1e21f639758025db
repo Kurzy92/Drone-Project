@@ -1,0 +1,349 @@
+/*
+ * bmp390.h
+ *
+ *  Created on: Apr 29, 2024
+ *      Author: eyalk
+ */
+
+#ifndef INC_BMP390_H_
+#define INC_BMP390_H_
+
+#include "stm32f7xx_hal.h"
+#include "arm_math.h"
+#include "stdint.h"
+
+#define AIR_DENSITY_KG_PER_M3	1.225f
+#define GRAVITY_ACC_MPS2		9.81f
+#define PRESSURE_SEA_LEVEL_PA	101325.0f
+
+#define BMP390_INITIAL_PRESSURE_SAMPLE_COUNT	50
+#define BMP390_LPF_BAR_ALPHA					0.25f
+
+#define BMP390_OK 		0
+#define BMP390_ERROR 	255
+
+#define BMP390_SPI_WRITE_MASK  		0x7F  // Mask to write data
+#define BMP390_SPI_READ_MASK   		0x80  // Mask to read data
+
+#define BMP390_ADR_CHIP_ID			0x00
+#define BMP390_CHIP_ID				0x60
+
+#define BMP390_ADR_REG_ID			0x01
+#define BMP390_ADR_ERR_REG			0x02
+#define BMP390_ADR_STATUS			0x03
+#define BMP390_ADR_DATA0			0x04
+#define BMP390_ADR_DATA1			0x05
+#define BMP390_ADR_DATA2			0x06
+#define BMP390_ADR_DATA3			0x07
+#define BMP390_ADR_DATA4			0x08
+#define BMP390_ADR_DATA5			0x09
+#define BMP390_ADR_SENSORTIME_0		0x0C
+#define BMP390_ADR_SENSORTIME_1		0x0D
+#define BMP390_ADR_SENSORTIME_2		0x0E
+#define BMP390_ADR_EVENT			0x10
+#define BMP390_ADR_INT_STATUS		0x11
+#define BMP390_ADR_FIFO_LENGTH_0	0x12
+#define BMP390_ADR_FIFO_LENGTH_1	0x13
+#define BMP390_ADR_FIFO_DATA		0x14
+#define BMP390_ADR_FIFO_WTM_0		0x15
+#define BMP390_ADR_FIFO_WTM_1		0x16
+#define BMP390_ADR_FIFO_CONFIG_1	0x17
+#define BMP390_ADR_FIFO_CONFIG_2	0x18
+#define BMP390_ADR_INT_CTRL			0x19
+#define BMP390_ADR_IF_CONF			0x1A
+#define BMP390_ADR_PWR_CTRL			0x1B
+#define BMP390_ADR_OSR				0x1C
+#define BMP390_ADR_ODR				0x1D
+#define BMP390_ADR_CONFIG			0x1F
+#define BMP390_ADR_CMD				0x7E
+
+// STATUS
+#define BMP390_STATUS_CMD_RDY_POS 							(1 << 4)
+#define BMP390_STATUS_DRDY_PRESS_POS 						(1 << 5)
+#define BMP390_STATUS_DRDY_TEMP_POS 						(1 << 6)
+
+// FIFO_CONFIG_1
+#define BMP390_FIFO_CONFIG1_FIFO_MODE_POS				0
+#define BMP390_FIFO_CONFIG1_FIFO_MODE_DISABLE			(0 << BMP390_FIFO_CONFIG1_FIFO_MODE_POS)
+#define BMP390_FIFO_CONFIG1_FIFO_MODE_ENABLE			(1 << BMP390_FIFO_CONFIG1_FIFO_MODE_POS)
+
+#define BMP390_FIFO_CONFIG1_FIFO_STOP_ON_FULL_POS		1
+#define BMP390_FIFO_CONFIG1_FIFO_STOP_ON_FULL_DISABLE	(0 << BMP390_FIFO_CONFIG1_FIFO_STOP_ON_FULL_POS)
+#define BMP390_FIFO_CONFIG1_FIFO_STOP_ON_FULL_ENABLE	(1 << BMP390_FIFO_CONFIG1_FIFO_STOP_ON_FULL_POS)
+
+#define BMP390_FIFO_CONFIG1_FIFO_TIME_EN_POS			2
+#define BMP390_FIFO_CONFIG1_FIFO_TIME_EN_DISABLE		(0 << BMP390_FIFO_CONFIG1_FIFO_TIME_EN_POS)
+#define BMP390_FIFO_CONFIG1_FIFO_TIME_EN_ENABLE			(1 << BMP390_FIFO_CONFIG1_FIFO_TIME_EN_POS)
+
+#define BMP390_FIFO_CONFIG1_FIFO_PRESS_EN_POS			3
+#define BMP390_FIFO_CONFIG1_FIFO_PRESS_EN_DISABLE		(0 << BMP390_FIFO_CONFIG1_FIFO_PRESS_EN_POS)
+#define BMP390_FIFO_CONFIG1_FIFO_PRESS_EN_ENABLE		(1 << BMP390_FIFO_CONFIG1_FIFO_PRESS_EN_POS)
+
+#define BMP390_FIFO_CONFIG1_FIFO_TEMP_EN_POS			4
+#define BMP390_FIFO_CONFIG1_FIFO_TEMP_EN_DISABLE		(0 << BMP390_FIFO_CONFIG1_FIFO_PRESS_EN_POS)
+#define BMP390_FIFO_CONFIG1_FIFO_TEMP_EN_ENABLE			(1 << BMP390_FIFO_CONFIG1_FIFO_PRESS_EN_POS)
+
+// FIFO_CONFIG_2
+#define BMP390_FIFO_CONFIG2_FIFO_SUBSAMPLING_POS	0
+
+//#define BMP390_FIFO_CONFIG2_DATA_SELECT_POS			3
+//#define BMP390_FIFO_CONFIG2_DATA_SELECT_UNFILTERED
+//#define BMP390_FIFO_CONFIG2_DATA_SELECT_FILTERED
+//#define BMP390_FIFO_CONFIG2_DATA_SELECT_
+
+// INT_CTRL
+#define BMP390_INT_CTRL_INT_OD_POS				0
+#define BMP390_INT_CTRL_INT_OD_PP				(0 << BMP390_INT_CTRL_INT_OD_POS)
+#define BMP390_INT_CTRL_INT_OD_OD				(1 << BMP390_INT_CTRL_INT_OD_POS)
+
+#define BMP390_INT_CTRL_INT_LEVEL_POS			1
+#define BMP390_INT_CTRL_INT_LEVEL_ACTIVE_LOW	(0 << BMP390_INT_CTRL_INT_LEVEL_POS)
+#define BMP390_INT_CTRL_INT_LEVEL_ACTIVE_HIGH	(1 << BMP390_INT_CTRL_INT_LEVEL_POS)
+
+#define BMP390_INT_CTRL_INT_LATCH_POS			2
+#define BMP390_INT_CTRL_INT_LATCH_DISABLE		(0 << BMP390_INT_CTRL_INT_LEVEL_POS)
+#define BMP390_INT_CTRL_INT_LATCH_ENABLE		(1 << BMP390_INT_CTRL_INT_LEVEL_POS)
+
+#define BMP390_INT_CTRL_FWTM_EN_POS				3
+#define BMP390_INT_CTRL_FWTM_EN_DISABLE			(0 << BMP390_INT_CTRL_FWTM_EN_POS)
+#define BMP390_INT_CTRL_FWTM_EN_ENABLE			(1 << BMP390_INT_CTRL_FWTM_EN_POS)
+
+#define BMP390_INT_CTRL_FFULL_EN_POS			4
+#define BMP390_INT_CTRL_FFULL_EN_DISABLE		(0 << BMP390_INT_CTRL_FWTM_EN_POS)
+#define BMP390_INT_CTRL_FFULL_EN_ENABLE			(1 << BMP390_INT_CTRL_FWTM_EN_POS)
+
+#define BMP390_INT_CTRL_INT_DS_POS				5
+#define BMP390_INT_CTRL_INT_DS_LOW				(0 << BMP390_INT_CTRL_INT_DS_POS)
+#define BMP390_INT_CTRL_INT_DS_HIGH				(1 << BMP390_INT_CTRL_INT_DS_POS)
+
+#define BMP390_INT_CTRL_DRDY_EN_POS				6
+#define BMP390_INT_CTRL_DRDY_EN_DISABLE			(0 << BMP390_INT_CTRL_INT_DS_POS)
+#define BMP390_INT_CTRL_DRDY_EN_ENABLE			(1 << BMP390_INT_CTRL_INT_DS_POS)
+
+// IF_CONF Reg
+#define BMP390_IF_CONF_SPI3_POS					0
+#define BMP390_IF_CONF_SPI3_4WIRE				(0 << BMP390_IF_CONF_SPI3_POS)
+#define BMP390_IF_CONF_SPI3_3WIRE				(1 << BMP390_IF_CONF_SPI3_POS)
+
+#define BMP390_IF_CONF_I2C_WDT_EN_POS			1
+#define BMP390_IF_CONF_I2C_WDT_EN_DISABLE		(0 << BMP390_IF_CONF_I2C_WDT_EN_POS)
+#define BMP390_IF_CONF_I2C_WDT_EN_ENABLE		(1 << BMP390_IF_CONF_I2C_WDT_EN_POS)
+
+#define BMP390_IF_CONF_I2C_WDT_SEL_POS			2
+#define BMP390_IF_CONF_I2C_WDT_SEL_1_25MS		(0 << BMP390_IF_CONF_I2C_WDT_EN_POS)
+#define BMP390_IF_CONF_I2C_WDT_SEL_40MS			(1 << BMP390_IF_CONF_I2C_WDT_EN_POS)
+
+// PWR_CTRL Reg
+#define BMP390_PWR_CTRL_PRRESS_EN_POS			0
+#define BMP390_PWR_CTRL_PRRESS_EN_OFF			(0  << BMP390_PWR_CTRL_PRRESS_EN_POS)
+#define BMP390_PWR_CTRL_PRRESS_EN_ON			(1  << BMP390_PWR_CTRL_PRRESS_EN_POS)
+
+#define BMP390_PWR_CTRL_TEMP_EN_POS				1
+#define BMP390_PWR_CTRL_TEMP_EN_OFF				(0  << BMP390_PWR_CTRL_TEMP_EN_POS)
+#define BMP390_PWR_CTRL_TEMP_EN_ON				(1  << BMP390_PWR_CTRL_TEMP_EN_POS)
+
+#define BMP390_PWR_CTRL_MODE_POS				4
+#define BMP390_PWR_CTRL_MODE_SLEEP				(0 << BMP390_PWR_CTRL_MODE_POS)
+#define BMP390_PWR_CTRL_MODE_FORCED				(1 << BMP390_PWR_CTRL_MODE_POS)
+#define BMP390_PWR_CTRL_MODE_NORMAL				(3 << BMP390_PWR_CTRL_MODE_POS)
+
+// OSR_P Reg
+#define BMP390_OSR_PRESSURE_OVERSAMPLING_POS			0
+#define BMP390_OSR_PRESSURE_OVERSAMPLING_NONE			(0 << BMP390_OSR_PRESSURE_OVERSAMPLING_POS)
+#define BMP390_OSR_PRESSURE_OVERSAMPLING_2X				(1 << BMP390_OSR_PRESSURE_OVERSAMPLING_POS)
+#define BMP390_OSR_PRESSURE_OVERSAMPLING_4X				(2 << BMP390_OSR_PRESSURE_OVERSAMPLING_POS)
+#define BMP390_OSR_PRESSURE_OVERSAMPLING_8X				(3 << BMP390_OSR_PRESSURE_OVERSAMPLING_POS)
+#define BMP390_OSR_PRESSURE_OVERSAMPLING_16X			(4 << BMP390_OSR_PRESSURE_OVERSAMPLING_POS)
+#define BMP390_OSR_PRESSURE_OVERSAMPLING_32X			(5 << BMP390_OSR_PRESSURE_OVERSAMPLING_POS)
+
+// OSR4_T Reg
+#define BMP390_OSR_TEMP_OVERSAMPLING_POS			3
+#define BMP390_OSR_TEMP_OVERSAMPLING_NONE			(0 << BMP390_OSR_TEMP_OVERSAMPLING_POS)
+#define BMP390_OSR_TEMP_OVERSAMPLING_2X				(1 << BMP390_OSR_TEMP_OVERSAMPLING_POS)
+#define BMP390_OSR_TEMP_OVERSAMPLING_4X				(2 << BMP390_OSR_TEMP_OVERSAMPLING_POS)
+#define BMP390_OSR_TEMP_OVERSAMPLING_8X				(3 << BMP390_OSR_TEMP_OVERSAMPLING_POS)
+#define BMP390_OSR_TEMP_OVERSAMPLING_16X			(4 << BMP390_OSR_TEMP_OVERSAMPLING_POS)
+#define BMP390_OSR_TEMP_OVERSAMPLING_32X			(5 << BMP390_OSR_TEMP_OVERSAMPLING_POS)
+
+// ODR Reg
+#define BMP390_ODR_HZ_200							0
+#define BMP390_ODR_HZ_100							1
+#define BMP390_ODR_HZ_50							2
+#define BMP390_ODR_HZ_25							3
+#define BMP390_ODR_HZ_12p5							4
+
+// CONFIG REG
+#define BMP390_CONFIG_IIR_FILTER_POS				1
+#define BMP390_CONFIG_IIR_FILTER_COEF0				(0 << BMP390_CONFIG_IIR_FILTER_POS)
+#define BMP390_CONFIG_IIR_FILTER_COEF1				(1 << BMP390_CONFIG_IIR_FILTER_POS)
+#define BMP390_CONFIG_IIR_FILTER_COEF3				(2 << BMP390_CONFIG_IIR_FILTER_POS)
+#define BMP390_CONFIG_IIR_FILTER_COEF7				(3 << BMP390_CONFIG_IIR_FILTER_POS)
+#define BMP390_CONFIG_IIR_FILTER_COEF15				(4 << BMP390_CONFIG_IIR_FILTER_POS)
+#define BMP390_CONFIG_IIR_FILTER_COEF31				(5 << BMP390_CONFIG_IIR_FILTER_POS)
+#define BMP390_CONFIG_IIR_FILTER_COEF63				(6 << BMP390_CONFIG_IIR_FILTER_POS)
+#define BMP390_CONFIG_IIR_FILTER_COEF127			(7 << BMP390_CONFIG_IIR_FILTER_POS)
+
+// CMD REG Commands
+#define BMP390_CMD_FIFO_FLUSH						0xB0
+#define BMP390_CMD_SOFT_RESET						0xB6
+
+// Calibration Coefficients Regs
+#define BMP390_ADR_FIRST_CALIB_COEFF				0x31
+#define BMP390_ADR_LAST_CALIB_COEFF					0x45
+#define BMP390_CALIB_COEFF_SIZE						(BMP390_ADR_LAST_CALIB_COEFF - BMP390_ADR_FIRST_CALIB_COEFF + 1)
+
+/*
+ * Calibration Coefficients fixing constants
+ */
+
+#define CONST_T1 		0.00390625f
+#define CONST_T2 		1073741824.0f
+#define CONST_T3 		281474976710656.0f
+#define CONST_P1		1048576.0f
+#define CONST_P1_MIN	16384.0f
+#define CONST_P2		536870912.0f
+#define CONST_P2_MIN	16384.0f
+#define CONST_P3		4294967296.0f
+#define CONST_P4		137438953472.0f
+#define CONST_P5		0.125f
+#define CONST_P6		64.0f
+#define CONST_P7		256.0f
+#define CONST_P8		32768.0f
+#define CONST_P9		281474976710656.0f
+#define CONST_P10		281474976710656.0f
+#define CONST_P11		36893488147419103232.0f
+
+
+/*
+ * Structs
+ */
+
+
+//#pragma pack(push, 1)
+//	typedef union calibData {
+//		struct {
+//			// Calibration Parameters //
+//			uint16_t t1;	// raw[0] + raw[1] << 8
+//			uint16_t t2;	// raw[2] + raw[3] << 8
+//			int8_t t3;		// raw[4]
+//			int16_t p1;		// raw[5] + raw[6] << 8
+//			int16_t p2;		// raw[7] + raw[8] << 8
+//			int8_t p3;		// raw[9]
+//			int8_t p4;		// raw[10]
+//			uint16_t p5;	// raw[11] + raw[12] << 8
+//			uint16_t p6;	// raw[13] + raw[14] << 8
+//			int8_t p7;  	// raw[15]
+//			int8_t p8;	  	// raw[16]
+//			int16_t p9; 	// raw[17] + raw[18] << 8
+//			int8_t p10; 	// raw[19]
+//			int8_t p11; 	// raw[20]
+//		};
+//		uint8_t raw[BMP390_CALIB_COEFF_SIZE];
+//	} BMP390_calibData_t;
+//#pragma pack(pop)
+
+
+typedef struct calibData {
+	// Calibration Parameters //
+	uint16_t t1;	// raw[0] + raw[1] << 8
+	uint16_t t2;	// raw[2] + raw[3] << 8
+	int8_t t3;		// raw[4]
+	int16_t p1;		// raw[5] + raw[6] << 8
+	int16_t p2;		// raw[7] + raw[8] << 8
+	int8_t p3;		// raw[9]
+	int8_t p4;		// raw[10]
+	uint16_t p5;	// raw[11] + raw[12] << 8
+	uint16_t p6;	// raw[13] + raw[14] << 8
+	int8_t p7;  	// raw[15]
+	int8_t p8;	  	// raw[16]
+	int16_t p9; 	// raw[17] + raw[18] << 8
+	int8_t p10; 	// raw[19]
+	int8_t p11; 	// raw[20]
+} BMP390_calibData_t;
+
+
+
+typedef struct post_calib_coeffs
+{
+		/*! Quantized Trim Variables */
+	double par_t1;
+	double par_t2;
+	double par_t3;
+	double par_p1;
+	double par_p2;
+	double par_p3;
+	double par_p4;
+	double par_p5;
+	double par_p6;
+	double par_p7;
+	double par_p8;
+	double par_p9;
+	double par_p10;
+	double par_p11;
+	double t_lin;
+} BMP390_post_calib_coeffs_t;
+
+
+typedef struct {
+	// Compensated Temperature
+	float32_t temperature;
+
+	// Compensated Pressure
+	float32_t pressure;
+
+} BMP390_data_t;
+
+
+typedef struct {
+	SPI_HandleTypeDef* pHSPI; // SPI Handler
+	GPIO_TypeDef * pSPI_GPIO_PORT;
+	uint8_t pSPI_GPIO_PIN;
+
+	uint8_t dummyByte;
+
+	int notRdyCount;
+
+	int64_t temp;
+	int64_t pressurePA;
+
+	//BMP390_calibData_t preCalibData;
+	BMP390_post_calib_coeffs_t postCalibCoeffs;
+	BMP390_data_t calib_data;
+
+} BMP390_SPI;
+
+/*!
+ * @brief BMP390 data struct that holds the calculated values of
+ * the pressure and the temperature
+ */
+
+
+/*
+ * Functions
+ */
+
+uint8_t BMP390_Init(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
+
+/* Not for the user's use */
+static int64_t BMP390_compensate_temperature(BMP390_SPI* bar, uint32_t uncomp_temp);
+static float BMP390_compensate_pressure(BMP390_SPI* bar, uint32_t uncomp_pressure);
+static uint8_t BMP390_coeff_calibration(BMP390_SPI* bar, BMP390_calibData_t preCalibData); // to be used only inside Init function.
+static uint8_t BMP390_coeff_read(BMP390_SPI* bar, uint8_t* rawArr);
+static uint8_t BMP390_read_data_regs(BMP390_SPI*  bar, uint8_t *dataArr, uint8_t length);
+static uint8_t BMP390_Set_calibs(BMP390_calibData_t* cD, uint8_t* raw);
+static uint8_t BMP390_get_data_status(BMP390_SPI*  bar);
+static uint8_t perform_soft_reset(BMP390_SPI* bar);
+static void store_SPI_intf(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
+
+/* User's API */
+float32_t BMP390_Get_Altitude(BMP390_SPI* bar);
+
+HAL_StatusTypeDef BMP390_SPI_READ_REG(BMP390_SPI* bar, uint8_t *dataT, uint8_t *dataR);
+HAL_StatusTypeDef BMP390_SPI_READ_MULTIPLE_REGS(BMP390_SPI* bar, uint8_t *dataT, uint8_t *dataR, uint8_t length);
+HAL_StatusTypeDef BMP390_SPI_WRITE_REG(BMP390_SPI* bar, uint8_t *dataReg, uint8_t* dataToWrite);
+
+HAL_StatusTypeDef BMP390_SPI_WAIT_FOR_CMD_RDY(BMP390_SPI* bar);
+
+
+
+#endif /* INC_BMP390_H_ */

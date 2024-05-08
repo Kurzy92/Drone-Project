@@ -1,0 +1,4 @@
+../Sensors_Drivers/LIS3MDL/Src/lis3mdl.c:9:19:LIS3MDL_Init	24	static
+../Sensors_Drivers/LIS3MDL/Src/lis3mdl.c:43:19:LIS3MDL_I2C_ReadRegister	40	static
+../Sensors_Drivers/LIS3MDL/Src/lis3mdl.c:48:19:LIS3MDL_I2C_ReadRegisters	40	static
+../Sensors_Drivers/LIS3MDL/Src/lis3mdl.c:53:19:LIS3MDL_I2C_WriteRegister	40	static

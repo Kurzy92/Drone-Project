@@ -1,0 +1,8 @@
+../Core/Src/quaternions.c:11:9:quaternion_init	16	static
+../Core/Src/quaternions.c:19:9:quaternion_addition	40	static
+../Core/Src/quaternions.c:29:9:quaternion_subtraction	40	static
+../Core/Src/quaternions.c:39:9:quaternion_multiplication	40	static
+../Core/Src/quaternions.c:49:9:quaternion_conj	32	static
+../Core/Src/quaternions.c:59:11:quaternion_norm	32	static
+../Core/Src/quaternions.c:66:9:quaternion_inverse	56	static
+../Core/Src/quaternions.c:80:9:quaternion_eulerXYZ_conversion	64	static

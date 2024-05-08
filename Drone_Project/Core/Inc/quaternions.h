@@ -1,0 +1,43 @@
+/*
+ * quaternions.h
+ *
+ *  Created on: Apr 28, 2024
+ *      Author: eyalk
+ */
+
+#ifndef INC_QUATERNIONS_H_
+#define INC_QUATERNIONS_H_
+
+#include "stm32f746xx.h"
+#include "arm_math.h"
+#include  "math.h"
+
+typedef struct {
+	union {
+		float32_t qData[4];
+		struct {
+			float32_t q0;
+			float32_t q1;
+			float32_t q2;
+			float32_t q3;
+		};
+	};
+} quaternion_t;
+
+typedef struct {
+	float32_t phi;
+	float32_t theta;
+	float32_t psi;
+} euler_t;
+
+uint8_t quaternion_init(quaternion_t* q1, const float32_t *data);
+uint8_t quaternion_addition(const quaternion_t* q1, const quaternion_t* q2, quaternion_t* q3);
+uint8_t quaternion_subtraction(const quaternion_t* q1, const quaternion_t* q2, quaternion_t* q3);
+uint8_t quaternion_multiplication(const quaternion_t* q1, const quaternion_t* q2, quaternion_t* q3);
+uint8_t quaternion_conj(const quaternion_t * q1, quaternion_t* q1_conj);
+float32_t quaternion_norm(const quaternion_t* q1);
+uint8_t quaternion_inverse(const quaternion_t* q1, quaternion_t* q1_inv);
+uint8_t quaternion_eulerXYZ_conversion(const quaternion_t* q, euler_t* euler);
+
+
+#endif /* INC_QUATERNIONS_H_ */

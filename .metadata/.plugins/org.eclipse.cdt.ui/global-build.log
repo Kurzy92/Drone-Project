@@ -1,0 +1,322 @@
+19:30:03 **** Incremental Build of configuration Debug for project Drone_Project ****
+make -j24 all 
+arm-none-eabi-gcc "../Sensors_Drivers/BMP3XX/Src/bmp390.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F746xx -DARM_MATH_CM7 -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/ST/ARM/DSP/Inc -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LIS3MDL/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LSM6DSOX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/ESC/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Sensors_Drivers/BMP3XX/Src/bmp390.d" -MT"Sensors_Drivers/BMP3XX/Src/bmp390.o" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -o "Sensors_Drivers/BMP3XX/Src/bmp390.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F746xx -DARM_MATH_CM7 -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/ST/ARM/DSP/Inc -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LIS3MDL/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LSM6DSOX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/ESC/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/stm32f7xx_hal_msp.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F746xx -DARM_MATH_CM7 -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/ST/ARM/DSP/Inc -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LIS3MDL/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LSM6DSOX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/ESC/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/stm32f7xx_hal_msp.d" -MT"Core/Src/stm32f7xx_hal_msp.o" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32f7xx_hal_msp.o"
+arm-none-eabi-gcc "../Core/Src/stm32f7xx_it.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F746xx -DARM_MATH_CM7 -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/ST/ARM/DSP/Inc -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LIS3MDL/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LSM6DSOX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/ESC/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/stm32f7xx_it.d" -MT"Core/Src/stm32f7xx_it.o" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32f7xx_it.o"
+In file included from ../Sensors_Drivers/BMP3XX/Src/bmp390.c:8:
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'set_drone_settings':
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:94:17: note: in expansion of macro 'BMP390_ERROR'
+   94 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:102:17: note: in expansion of macro 'BMP390_ERROR'
+  102 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:109:17: note: in expansion of macro 'BMP390_ERROR'
+  109 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:116:17: note: in expansion of macro 'BMP390_ERROR'
+  116 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'BMP390_Get_Altitude':
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:157:17: warning: unused variable 'altitude' [-Wunused-variable]
+  157 |         int64_t altitude = 44330 * (1 - pow((float)(pressure/PRESSURE_SEA_LEVEL_PA), 1/5.255));
+      |                 ^~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h: At top level:
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:317:16: warning: 'BMP390_coeff_calibration' declared 'static' but never defined [-Wunused-function]
+  317 | static uint8_t BMP390_coeff_calibration(BMP390_SPI* bar, BMP390_calibData_t preCalibData); // to be used only inside Init function.
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'BMP390_Get_Altitude':
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:158:1: warning: control reaches end of non-void function [-Wreturn-type]
+  158 | }
+      | ^
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: At top level:
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:146:16: warning: 'BMP390_get_data_status' defined but not used [-Wunused-function]
+  146 | static uint8_t BMP390_get_data_status(BMP390_SPI*  bar) {
+      |                ^~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:145:20: warning: unused variable 'pressure' [-Wunused-variable]
+  145 |           uint64_t pressure = BMP390_Get_Altitude(&baro_sensor);
+      |                    ^~~~~~~~
+In file included from ../Core/Inc/main.h:34,
+                 from ../Core/Src/main.c:20:
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h: At top level:
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:312:16: warning: 'BMP390_Init' declared 'static' but never defined [-Wunused-function]
+  312 | static uint8_t BMP390_Init(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
+      |                ^~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:315:16: warning: 'BMP390_compensate_temperature' declared 'static' but never defined [-Wunused-function]
+  315 | static int64_t BMP390_compensate_temperature(BMP390_SPI* bar, BMP390_data_t* uncomp_data, int64_t* temperature);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:316:17: warning: 'BMP390_compensate_pressure' declared 'static' but never defined [-Wunused-function]
+  316 | static uint64_t BMP390_compensate_pressure(BMP390_SPI* bar, BMP390_data_t* uncomp_data, uint64_t* pressure);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:317:16: warning: 'BMP390_coeff_calibration' declared 'static' but never defined [-Wunused-function]
+  317 | static uint8_t BMP390_coeff_calibration(BMP390_SPI* bar, BMP390_calibData_t preCalibData); // to be used only inside Init function.
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:318:16: warning: 'BMP390_get_coeffs' declared 'static' but never defined [-Wunused-function]
+  318 | static uint8_t BMP390_get_coeffs(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:319:16: warning: 'BMP390_set_calibs' declared 'static' but never defined [-Wunused-function]
+  319 | static uint8_t BMP390_set_calibs(BMP390_SPI* bar, uint8_t* reg_data);
+      |                ^~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:320:16: warning: 'BMP390_get_data_status' declared 'static' but never defined [-Wunused-function]
+  320 | static uint8_t BMP390_get_data_status(BMP390_SPI*  bar);
+      |                ^~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:321:16: warning: 'perform_soft_reset' declared 'static' but never defined [-Wunused-function]
+  321 | static uint8_t perform_soft_reset(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:322:13: warning: 'store_SPI_intf' declared 'static' but never defined [-Wunused-function]
+  322 | static void store_SPI_intf(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
+      |             ^~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:323:16: warning: 'parse_sensor_data' declared 'static' but never defined [-Wunused-function]
+  323 | static uint8_t parse_sensor_data(uint8_t* dataArr, BMP390_data_t* uncomp_data);
+      |                ^~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:324:16: warning: 'get_comp_data' declared 'static' but never defined [-Wunused-function]
+  324 | static uint8_t get_comp_data(BMP390_SPI* bar, BMP390_data_t* uncomp_data, BMP390_data_t* comp_data);
+      |                ^~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:325:16: warning: 'set_drone_settings' declared 'static' but never defined [-Wunused-function]
+  325 | static uint8_t set_drone_settings(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:326:16: warning: 'set_normal_mode' declared 'static' but never defined [-Wunused-function]
+  326 | static uint8_t set_normal_mode(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:327:17: warning: 'BMP390_get_pressure' declared 'static' but never defined [-Wunused-function]
+  327 | static uint64_t BMP390_get_pressure(BMP390_SPI*  bar);
+      |                 ^~~~~~~~~~~~~~~~~~~
+In file included from ../Core/Inc/main.h:34,
+                 from ../Core/Src/stm32f7xx_it.c:21:
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:312:16: warning: 'BMP390_Init' declared 'static' but never defined [-Wunused-function]
+  312 | static uint8_t BMP390_Init(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
+      |                ^~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:315:16: warning: 'BMP390_compensate_temperature' declared 'static' but never defined [-Wunused-function]
+  315 | static int64_t BMP390_compensate_temperature(BMP390_SPI* bar, BMP390_data_t* uncomp_data, int64_t* temperature);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:316:17: warning: 'BMP390_compensate_pressure' declared 'static' but never defined [-Wunused-function]
+  316 | static uint64_t BMP390_compensate_pressure(BMP390_SPI* bar, BMP390_data_t* uncomp_data, uint64_t* pressure);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:317:16: warning: 'BMP390_coeff_calibration' declared 'static' but never defined [-Wunused-function]
+  317 | static uint8_t BMP390_coeff_calibration(BMP390_SPI* bar, BMP390_calibData_t preCalibData); // to be used only inside Init function.
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:318:16: warning: 'BMP390_get_coeffs' declared 'static' but never defined [-Wunused-function]
+  318 | static uint8_t BMP390_get_coeffs(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:319:16: warning: 'BMP390_set_calibs' declared 'static' but never defined [-Wunused-function]
+  319 | static uint8_t BMP390_set_calibs(BMP390_SPI* bar, uint8_t* reg_data);
+      |                ^~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:320:16: warning: 'BMP390_get_data_status' declared 'static' but never defined [-Wunused-function]
+  320 | static uint8_t BMP390_get_data_status(BMP390_SPI*  bar);
+      |                ^~~~~~~~~~~~~~~~~~~~~~
+In file included from ../Core/Inc/main.h:34,
+                 from ../Core/Src/stm32f7xx_hal_msp.c:22:
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:312:16: warning: 'BMP390_Init' declared 'static' but never defined [-Wunused-function]
+  312 | static uint8_t BMP390_Init(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
+      |                ^~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:321:16: warning: 'perform_soft_reset' declared 'static' but never defined [-Wunused-function]
+  321 | static uint8_t perform_soft_reset(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:315:16: warning: 'BMP390_compensate_temperature' declared 'static' but never defined [-Wunused-function]
+  315 | static int64_t BMP390_compensate_temperature(BMP390_SPI* bar, BMP390_data_t* uncomp_data, int64_t* temperature);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:322:13: warning: 'store_SPI_intf' declared 'static' but never defined [-Wunused-function]
+  322 | static void store_SPI_intf(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
+      |             ^~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:316:17: warning: 'BMP390_compensate_pressure' declared 'static' but never defined [-Wunused-function]
+  316 | static uint64_t BMP390_compensate_pressure(BMP390_SPI* bar, BMP390_data_t* uncomp_data, uint64_t* pressure);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:323:16: warning: 'parse_sensor_data' declared 'static' but never defined [-Wunused-function]
+  323 | static uint8_t parse_sensor_data(uint8_t* dataArr, BMP390_data_t* uncomp_data);
+      |                ^~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:317:16: warning: 'BMP390_coeff_calibration' declared 'static' but never defined [-Wunused-function]
+  317 | static uint8_t BMP390_coeff_calibration(BMP390_SPI* bar, BMP390_calibData_t preCalibData); // to be used only inside Init function.
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:324:16: warning: 'get_comp_data' declared 'static' but never defined [-Wunused-function]
+  324 | static uint8_t get_comp_data(BMP390_SPI* bar, BMP390_data_t* uncomp_data, BMP390_data_t* comp_data);
+      |                ^~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:318:16: warning: 'BMP390_get_coeffs' declared 'static' but never defined [-Wunused-function]
+  318 | static uint8_t BMP390_get_coeffs(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:325:16: warning: 'set_drone_settings' declared 'static' but never defined [-Wunused-function]
+  325 | static uint8_t set_drone_settings(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:319:16: warning: 'BMP390_set_calibs' declared 'static' but never defined [-Wunused-function]
+  319 | static uint8_t BMP390_set_calibs(BMP390_SPI* bar, uint8_t* reg_data);
+      |                ^~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:326:16: warning: 'set_normal_mode' declared 'static' but never defined [-Wunused-function]
+  326 | static uint8_t set_normal_mode(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:320:16: warning: 'BMP390_get_data_status' declared 'static' but never defined [-Wunused-function]
+  320 | static uint8_t BMP390_get_data_status(BMP390_SPI*  bar);
+      |                ^~~~~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:327:17: warning: 'BMP390_get_pressure' declared 'static' but never defined [-Wunused-function]
+  327 | static uint64_t BMP390_get_pressure(BMP390_SPI*  bar);
+      |                 ^~~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:321:16: warning: 'perform_soft_reset' declared 'static' but never defined [-Wunused-function]
+  321 | static uint8_t perform_soft_reset(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:322:13: warning: 'store_SPI_intf' declared 'static' but never defined [-Wunused-function]
+  322 | static void store_SPI_intf(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
+      |             ^~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:323:16: warning: 'parse_sensor_data' declared 'static' but never defined [-Wunused-function]
+  323 | static uint8_t parse_sensor_data(uint8_t* dataArr, BMP390_data_t* uncomp_data);
+      |                ^~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:324:16: warning: 'get_comp_data' declared 'static' but never defined [-Wunused-function]
+  324 | static uint8_t get_comp_data(BMP390_SPI* bar, BMP390_data_t* uncomp_data, BMP390_data_t* comp_data);
+      |                ^~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:325:16: warning: 'set_drone_settings' declared 'static' but never defined [-Wunused-function]
+  325 | static uint8_t set_drone_settings(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:326:16: warning: 'set_normal_mode' declared 'static' but never defined [-Wunused-function]
+  326 | static uint8_t set_normal_mode(BMP390_SPI* bar);
+      |                ^~~~~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:327:17: warning: 'BMP390_get_pressure' declared 'static' but never defined [-Wunused-function]
+  327 | static uint64_t BMP390_get_pressure(BMP390_SPI*  bar);
+      |                 ^~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "Drone_Project.elf" @"objects.list"   -mcpu=cortex-m7 -T"C:\Embedded\Drone_Project\Drone_Project\STM32F746ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Drone_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Drone_Project.elf
+ 
+arm-none-eabi-size  Drone_Project.elf 
+arm-none-eabi-objdump -h -S Drone_Project.elf  > "Drone_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  36364	    432	   3864	  40660	   9ed4	Drone_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Drone_Project.list
+ 
+19:30:08 **** Incremental Build of configuration Debug for project Drone_Project ****
+make -j24 all 
+arm-none-eabi-size  Drone_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  36364	    432	   3864	  40660	   9ed4	Drone_Project.elf
+Finished building: default.size.stdout
+ 
+19:31:58 **** Incremental Build of configuration Debug for project Drone_Project ****
+make -j24 all 
+arm-none-eabi-gcc "../Sensors_Drivers/BMP3XX/Src/bmp390.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F746xx -DARM_MATH_CM7 -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/ST/ARM/DSP/Inc -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LIS3MDL/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LSM6DSOX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/ESC/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Sensors_Drivers/BMP3XX/Src/bmp390.d" -MT"Sensors_Drivers/BMP3XX/Src/bmp390.o" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -o "Sensors_Drivers/BMP3XX/Src/bmp390.o"
+In file included from ../Sensors_Drivers/BMP3XX/Src/bmp390.c:8:
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'set_drone_settings':
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:94:17: note: in expansion of macro 'BMP390_ERROR'
+   94 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:102:17: note: in expansion of macro 'BMP390_ERROR'
+  102 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:109:17: note: in expansion of macro 'BMP390_ERROR'
+  109 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:116:17: note: in expansion of macro 'BMP390_ERROR'
+  116 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'BMP390_Get_Altitude':
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:157:17: warning: unused variable 'altitude' [-Wunused-variable]
+  157 |         int64_t altitude = 44330 * (1 - pow((float)(pressure/PRESSURE_SEA_LEVEL_PA), 1/5.255));
+      |                 ^~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h: At top level:
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:317:16: warning: 'BMP390_coeff_calibration' declared 'static' but never defined [-Wunused-function]
+  317 | static uint8_t BMP390_coeff_calibration(BMP390_SPI* bar, BMP390_calibData_t preCalibData); // to be used only inside Init function.
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'BMP390_Get_Altitude':
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:158:1: warning: control reaches end of non-void function [-Wreturn-type]
+  158 | }
+      | ^
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: At top level:
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:146:16: warning: 'BMP390_get_data_status' defined but not used [-Wunused-function]
+  146 | static uint8_t BMP390_get_data_status(BMP390_SPI*  bar) {
+      |                ^~~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "Drone_Project.elf" @"objects.list"   -mcpu=cortex-m7 -T"C:\Embedded\Drone_Project\Drone_Project\STM32F746ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Drone_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Drone_Project.elf
+ 
+arm-none-eabi-size  Drone_Project.elf 
+arm-none-eabi-objdump -h -S Drone_Project.elf  > "Drone_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  36388	    432	   3864	  40684	   9eec	Drone_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Drone_Project.list
+ 
+19:32:30 **** Incremental Build of configuration Debug for project Drone_Project ****
+make -j24 all 
+arm-none-eabi-size  Drone_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  36388	    432	   3864	  40684	   9eec	Drone_Project.elf
+Finished building: default.size.stdout
+ 
+19:33:52 **** Incremental Build of configuration Debug for project Drone_Project ****
+make -j24 all 
+arm-none-eabi-gcc "../Sensors_Drivers/BMP3XX/Src/bmp390.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F746xx -DARM_MATH_CM7 -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/ST/ARM/DSP/Inc -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LIS3MDL/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LSM6DSOX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/ESC/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Sensors_Drivers/BMP3XX/Src/bmp390.d" -MT"Sensors_Drivers/BMP3XX/Src/bmp390.o" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -o "Sensors_Drivers/BMP3XX/Src/bmp390.o"
+In file included from ../Sensors_Drivers/BMP3XX/Src/bmp390.c:8:
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'set_drone_settings':
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:94:17: note: in expansion of macro 'BMP390_ERROR'
+   94 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:102:17: note: in expansion of macro 'BMP390_ERROR'
+  102 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:109:17: note: in expansion of macro 'BMP390_ERROR'
+  109 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
+   23 | #define BMP390_ERROR    255
+      |                         ^~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:116:17: note: in expansion of macro 'BMP390_ERROR'
+  116 |                 BMP390_ERROR;
+      |                 ^~~~~~~~~~~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'BMP390_Get_Altitude':
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:157:17: warning: unused variable 'altitude' [-Wunused-variable]
+  157 |         int64_t altitude = 44330 * (1 - pow((float)(pressure/PRESSURE_SEA_LEVEL_PA), 1/5.255));
+      |                 ^~~~~~~~
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h: At top level:
+C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:317:16: warning: 'BMP390_coeff_calibration' declared 'static' but never defined [-Wunused-function]
+  317 | static uint8_t BMP390_coeff_calibration(BMP390_SPI* bar, BMP390_calibData_t preCalibData); // to be used only inside Init function.
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'BMP390_Get_Altitude':
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:158:1: warning: control reaches end of non-void function [-Wreturn-type]
+  158 | }
+      | ^
+../Sensors_Drivers/BMP3XX/Src/bmp390.c: At top level:
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:146:16: warning: 'BMP390_get_data_status' defined but not used [-Wunused-function]
+  146 | static uint8_t BMP390_get_data_status(BMP390_SPI*  bar) {
+      |                ^~~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "Drone_Project.elf" @"objects.list"   -mcpu=cortex-m7 -T"C:\Embedded\Drone_Project\Drone_Project\STM32F746ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Drone_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Drone_Project.elf
+ 
+arm-none-eabi-size  Drone_Project.elf 
+arm-none-eabi-objdump -h -S Drone_Project.elf  > "Drone_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  36388	    432	   3864	  40684	   9eec	Drone_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Drone_Project.list
+ 

@@ -1,0 +1,2 @@
+../Core/Src/ekf.c:12:6:EKF_Prediction	16	static
+../Core/Src/ekf.c:15:6:EKF_Update	16	static

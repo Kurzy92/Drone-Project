@@ -1,0 +1,385 @@
+/*
+ * bmp390.c
+ *
+ *  Created on: Apr 29, 2024
+ *      Author: eyalk
+ */
+
+#include "bmp390.h"
+
+
+static uint8_t BMP390_Init(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN) {
+	// Store SPI Interface related data
+	store_SPI_intf(bar, pHSPI, CS_PORT, CS_PIN);
+
+	// Check CHIP_ID
+	uint8_t regAdr = BMP390_ADR_CHIP_ID;
+	uint8_t regData;
+	if(BMP390_SPI_READ_REG(bar,  &regAdr, &regData ) != HAL_OK)
+		return BMP390_ERROR;
+	if(regData != BMP390_CHIP_ID)
+		return BMP390_ERROR;
+
+	//  Perform Soft Reset
+	if(perform_soft_reset(bar) != BMP390_OK)
+		return BMP390_ERROR;
+
+	// Get Calibration Coefficients
+	if(BMP390_get_coeffs(bar) != BMP390_OK)
+		return BMP390_ERROR;
+
+	// Set Drone Settings
+	if(set_drone_settings(bar) != BMP390_OK) {
+		return BMP390_ERROR;
+	}
+	if(set_normal_mode(bar)!= BMP390_OK)
+		return BMP390_ERROR;
+	return BMP390_OK;
+}
+
+void BMP390_START(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN) {
+	bar->initSuccess = BMP390_ERROR;
+	if(BMP390_Init(bar, pHSPI, CS_PORT, CS_PIN) == BMP390_OK) {
+		bar->initSuccess = BMP390_OK;
+	}
+}
+
+static void store_SPI_intf(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN) {
+	bar->pHSPI = pHSPI;
+	bar->pSPI_GPIO_PORT = CS_PORT;
+	bar->pSPI_GPIO_PIN = CS_PIN;
+	bar->dummyByte = 1;
+}
+
+static uint8_t set_normal_mode(BMP390_SPI* bar) {
+	// Check if sleep mode is on, if not, switch to sleep mode.
+	uint8_t dataAdr = BMP390_ADR_PWR_CTRL;
+	uint8_t dataRead;
+	uint8_t dataWrite;
+	uint8_t temp;
+
+	if(BMP390_SPI_READ_REG(bar, &dataAdr, &dataRead) != HAL_OK)
+		return BMP390_ERROR;
+	temp = (dataRead & BMP390_PWR_CTRL_MODE_SLEEP) & 0x02;
+	if((temp >> BMP390_PWR_CTRL_MODE_POS) != 0) {
+		// Switch to sleep mode
+		dataWrite = dataRead & (~BMP390_PWR_CTRL_MODE_POS);
+		if(BMP390_SPI_WRITE_REG(bar, &dataAdr, &dataWrite) != HAL_OK)
+			return BMP390_ERROR;
+		HAL_Delay(50);
+	}
+
+	// Set power mode to normal and enable press_en and temp_en
+	dataWrite = BMP390_PWR_CTRL_PRRESS_EN_ON |
+			         BMP390_PWR_CTRL_TEMP_EN_ON |
+					 BMP390_PWR_CTRL_MODE_NORMAL;
+	if(BMP390_SPI_WRITE_REG(bar, &dataAdr, &dataWrite) != HAL_OK)
+		return BMP390_ERROR;
+	HAL_Delay(50);
+
+	// Check conf_err(offset 2) bit of the ERR_REG register
+	dataAdr = BMP390_ADR_ERR_REG;
+	if(BMP390_SPI_READ_REG(bar, &dataAdr, &dataRead) != HAL_OK)
+		return BMP390_ERROR;
+	temp = (dataRead >> 2) & 0x01;
+	if(temp != 0)
+		return BMP390_ERROR;
+	return BMP390_OK;
+}
+
+static uint8_t set_drone_settings(BMP390_SPI* bar) {
+	uint8_t dataAdr = BMP390_ADR_ODR;
+	uint8_t dataWrite = BMP390_ODR_HZ_50;
+	if(BMP390_SPI_WRITE_REG(bar, &dataAdr, &dataWrite) != BMP390_OK) {
+		BMP390_ERROR;
+	}
+	HAL_Delay(100);
+
+	dataAdr = BMP390_ADR_OSR;
+	dataWrite = BMP390_OSR_PRESSURE_OVERSAMPLING_8X |
+			              BMP390_OSR_TEMP_OVERSAMPLING_NONE;
+	if(BMP390_SPI_WRITE_REG(bar, &dataAdr, &dataWrite) != BMP390_OK) {
+		BMP390_ERROR;
+	}
+	HAL_Delay(100);
+
+	dataAdr = BMP390_ADR_CONFIG;
+	dataWrite = BMP390_CONFIG_IIR_FILTER_COEF3;
+	if(BMP390_SPI_WRITE_REG(bar, &dataAdr, &dataWrite) != BMP390_OK) {
+		BMP390_ERROR;
+	}
+	HAL_Delay(100);
+
+	dataAdr = BMP390_ADR_INT_CTRL;
+	dataWrite = BMP390_INT_CTRL_DRDY_EN_ENABLE;
+	if(BMP390_SPI_WRITE_REG(bar, &dataAdr, &dataWrite) != BMP390_OK) {
+		BMP390_ERROR;
+	}
+	HAL_Delay(100);
+
+	return BMP390_OK;
+}
+
+static uint8_t perform_soft_reset(BMP390_SPI* bar) {
+	uint8_t regAdr = BMP390_ADR_STATUS;
+	uint8_t regData;
+	if(BMP390_SPI_READ_REG(bar, &regAdr, &regData) != HAL_OK)
+		return BMP390_ERROR;
+
+	if((regData && BMP390_STATUS_CMD_RDY_POS)) {
+		regAdr = BMP390_ADR_CMD;
+		regData = BMP390_CMD_SOFT_RESET;
+
+		if(BMP390_SPI_WRITE_REG(bar, &regAdr, &regData) != HAL_OK)
+			return BMP390_ERROR;
+		HAL_Delay(2000);
+
+		regAdr = BMP390_ADR_ERR_REG;
+		if(BMP390_SPI_READ_REG(bar, &regAdr, &regData) != HAL_OK)
+			return BMP390_ERROR;
+		if(regData)
+			return BMP390_ERROR;
+	}
+	return BMP390_OK;
+}
+
+static uint8_t BMP390_get_data_status(BMP390_SPI*  bar) {
+	uint8_t dataADR = (uint8_t)BMP390_ADR_STATUS;
+	uint8_t statusREG = 0;
+	BMP390_SPI_READ_REG(bar, &dataADR, &statusREG);
+	if(statusREG != 0x70)
+		return BMP390_ERROR;
+	return BMP390_OK;
+}
+
+uint64_t BMP390_Get_Altitude(BMP390_SPI* bar) {
+	uint64_t pressure = BMP390_get_pressure(bar);
+	int64_t altitude = 44330 * (1 - pow((float)(pressure/PRESSURE_SEA_LEVEL_PA), 1/5.255));
+}
+
+static uint64_t BMP390_get_pressure(BMP390_SPI*  bar) {
+	if(bar->initSuccess != BMP390_OK)
+		return 0;
+	uint8_t dataAdress = BMP390_ADR_DATA0;
+	uint8_t dataArr[BMP390_DATA_REGS_LEN] = { 0 };
+
+	BMP390_data_t uncomp_data = { 0 };
+	BMP390_data_t comp_data = { 0 };
+
+
+	if(BMP390_SPI_READ_MULTIPLE_REGS(bar, &dataAdress, dataArr, BMP390_DATA_REGS_LEN) != HAL_OK)
+		return 0;
+
+	if(parse_sensor_data(dataArr, &uncomp_data) != BMP390_OK) {
+		return 0;
+	}
+
+	if(get_comp_data(bar, &uncomp_data, &comp_data) != BMP390_OK) {
+		return 0;
+	}
+	bar->calib_data.temperature = comp_data.temperature;
+	bar->calib_data.pressure = comp_data.pressure;
+
+	return comp_data.pressure;
+}
+
+static uint8_t get_comp_data(BMP390_SPI* bar, BMP390_data_t* uncomp_data, BMP390_data_t* comp_data) {
+
+	BMP390_compensate_temperature(bar, uncomp_data, &comp_data->temperature);
+
+	BMP390_compensate_pressure(bar, uncomp_data, &comp_data->pressure);
+
+	return BMP390_OK;
+}
+
+static uint8_t parse_sensor_data(uint8_t* dataArr, BMP390_data_t* uncomp_data) {
+	uint32_t  dataXLSB;
+	uint32_t  dataLSB;
+	uint32_t  dataMSB;
+
+	// Parsing Pressure Data
+	dataXLSB = (uint32_t)dataArr[0];
+	dataLSB = (uint32_t)dataArr[1] << 8;
+	dataMSB = (uint32_t)dataArr[2] << 16;
+	uncomp_data->pressure = dataXLSB | dataLSB | dataMSB;
+
+	// Parsing Pressure Data
+	dataXLSB = (uint32_t)dataArr[3];
+	dataLSB = (uint32_t)dataArr[4] << 8;
+	dataMSB = (uint32_t)dataArr[5] << 16;
+	uncomp_data->temperature = dataXLSB | dataLSB | dataMSB;
+
+	return BMP390_OK;
+}
+
+static uint8_t BMP390_get_coeffs(BMP390_SPI* bar) {
+	uint8_t dataFirstADR =  BMP390_ADR_FIRST_CALIB_COEFF;
+	uint8_t calib_coeffs[BMP390_CALIB_COEFF_SIZE] = {0};
+	if(BMP390_SPI_READ_MULTIPLE_REGS(bar, &dataFirstADR, calib_coeffs, BMP390_CALIB_COEFF_SIZE)
+			!= HAL_OK)
+		return BMP390_ERROR;
+	BMP390_set_calibs(bar, calib_coeffs);
+	return BMP390_OK;
+}
+
+static uint8_t BMP390_set_calibs(BMP390_SPI* bar, uint8_t* reg_data) {
+	BMP390_calibData_t* cD = &bar->calib_coeffs;
+	cD->t1 = BMP390_CONCAT_BYTES(reg_data[1], reg_data[0]);
+	cD->t2 = BMP390_CONCAT_BYTES(reg_data[3], reg_data[2]);
+	cD->t3 = (int8_t)reg_data[4];
+	cD->p1 = (int16_t)BMP390_CONCAT_BYTES(reg_data[6], reg_data[5]);
+	cD->p2 = (int16_t)BMP390_CONCAT_BYTES(reg_data[8], reg_data[7]);
+	cD->p3 = (int8_t)reg_data[9];
+	cD->p4 = (int8_t)reg_data[10];
+	cD->p5 = BMP390_CONCAT_BYTES(reg_data[12], reg_data[11]);
+	cD->p6 = BMP390_CONCAT_BYTES(reg_data[14], reg_data[13]);
+	cD->p7 = (int8_t)reg_data[15];
+	cD->p8 = (int8_t)reg_data[16];
+	cD->p9 = (int16_t)BMP390_CONCAT_BYTES(reg_data[18], reg_data[17]);
+	cD->p10 = (int8_t)reg_data[19];
+	cD->p11 = (int8_t)reg_data[20];
+	return BMP390_OK;
+}
+
+/*
+ * This function calculates the temperature in C, and updates it in comp_data.
+ * @bar - a pointer to the BMP390_SPI struct.
+ * @uncomp_data - a struct that holds the parsed data registers for both the
+ *    					  temperature and the pressure as extracted from the sensor registers.
+ * @comp_data - a struct that holds the compensated temperature & pressure data.
+ * This function is mostly taken from the official drivers
+ *
+ */
+static int64_t BMP390_compensate_temperature(BMP390_SPI* bar, BMP390_data_t* uncomp_data, int64_t* temperature) {
+	int64_t partial_data1;
+	int64_t partial_data2;
+	int64_t partial_data3;
+	int64_t partial_data4;
+	int64_t partial_data5;
+	int64_t partial_data6;
+	int64_t comp_temp;
+
+	partial_data1 = (int64_t)(uncomp_data->temperature - ((int64_t)256 * bar->calib_coeffs.t1));
+	partial_data2 = (int64_t)(bar->calib_coeffs.t2 * partial_data1);
+	partial_data3 = (int64_t)(partial_data1 * partial_data1);
+	partial_data4 = (int64_t)partial_data3 * bar->calib_coeffs.t3;
+	partial_data5 = (int64_t)((int64_t)(partial_data2 * 262144) + partial_data4);
+	partial_data6 = (int64_t)(partial_data5 / 4294967296);
+
+    /* Store t_lin in dev. structure for pressure calculation */
+	bar->calib_coeffs.t_lin = (int64_t)partial_data6;
+    comp_temp = (int64_t)((partial_data6 * 25) / 16384);
+
+    if (comp_temp < BMP390_MIN_TEMP_INT)
+    {
+        comp_temp = BMP390_MIN_TEMP_INT;
+    }
+
+    if (comp_temp > BMP390_MAX_TEMP_INT)
+    {
+        comp_temp = BMP390_MAX_TEMP_INT;
+    }
+
+    (*temperature) = comp_temp/10 + 17;
+    return BMP390_OK;
+}
+
+
+static uint64_t BMP390_compensate_pressure(BMP390_SPI* bar, BMP390_data_t* uncomp_data, uint64_t* pressure) {
+	/* Variable to store the compensated pressure */
+    BMP390_calibData_t *reg_calib_data = &bar->calib_coeffs;
+    int64_t partial_data1;
+    int64_t partial_data2;
+    int64_t partial_data3;
+    int64_t partial_data4;
+    int64_t partial_data5;
+    int64_t partial_data6;
+    int64_t offset;
+    int64_t sensitivity;
+    uint64_t comp_press;
+
+    partial_data1 = (int64_t)(reg_calib_data->t_lin * reg_calib_data->t_lin);
+    partial_data2 = (int64_t)(partial_data1 / 64);
+    partial_data3 = (int64_t)((partial_data2 * reg_calib_data->t_lin) / 256);
+    partial_data4 = (int64_t)((reg_calib_data->p8 * partial_data3) / 32);
+    partial_data5 = (int64_t)((reg_calib_data->p7 * partial_data1) * 16);
+    partial_data6 = (int64_t)((reg_calib_data->p6 * reg_calib_data->t_lin) * 4194304);
+    offset = (int64_t)((reg_calib_data->p5 * 140737488355328) + partial_data4 + partial_data5 + partial_data6);
+    partial_data2 = (int64_t)((reg_calib_data->p4 * partial_data3) / 32);
+    partial_data4 = (int64_t)((reg_calib_data->p3 * partial_data1) * 4);
+    partial_data5 = (int64_t)((reg_calib_data->p2 - (int32_t)16384) * reg_calib_data->t_lin * 2097152);
+    sensitivity =
+        (int64_t)(((reg_calib_data->p1 - (int32_t)16384) * 70368744177664) + partial_data2 + partial_data4 +
+                  partial_data5);
+    partial_data1 = (int64_t)((sensitivity / 16777216) * uncomp_data->pressure);
+    partial_data2 = (int64_t)(reg_calib_data->p10 * reg_calib_data->t_lin);
+    partial_data3 = (int64_t)(partial_data2 + ((int32_t)65536 * reg_calib_data->p9));
+    partial_data4 = (int64_t)((partial_data3 * uncomp_data->pressure) / (int32_t)8192);
+
+    /* dividing by 10 followed by multiplying by 10
+     * To avoid overflow caused by (uncomp_data->pressure * partial_data4)
+     */
+    partial_data5 = (int64_t)((uncomp_data->pressure * (partial_data4 / 10)) / (int32_t)512);
+    partial_data5 = (int64_t)(partial_data5 * 10);
+    partial_data6 = (int64_t)(uncomp_data->pressure * uncomp_data->pressure);
+    partial_data2 = (int64_t)((reg_calib_data->p11 * partial_data6) / (int32_t)65536);
+    partial_data3 = (int64_t)((int64_t)(partial_data2 * uncomp_data->pressure) / 128);
+    partial_data4 = (int64_t)((offset / 4) + partial_data1 + partial_data5 + partial_data3);
+    comp_press = (((uint64_t)partial_data4 * 25) / (uint64_t)1099511627776);
+
+
+    if (comp_press < BMP390_MIN_PRES_INT)
+    {
+        comp_press = BMP390_MIN_PRES_INT;
+    }
+
+    if (comp_press > BMP390_MAX_PRES_INT)
+    {
+        comp_press = BMP390_MAX_PRES_INT;
+    }
+    comp_press = comp_press / 100;
+    (*pressure) = comp_press;
+
+    return BMP390_OK;
+}
+
+HAL_StatusTypeDef BMP390_SPI_READ_MULTIPLE_REGS(BMP390_SPI* bar, uint8_t *dataT, uint8_t *dataR, uint8_t length) {
+	uint8_t dataTRead = *dataT | BMP390_SPI_READ_MASK;
+
+	HAL_GPIO_WritePin(bar->pSPI_GPIO_PORT, bar->pSPI_GPIO_PIN, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(bar->pHSPI, &dataTRead, 1, 100);
+	HAL_SPI_Transmit(bar->pHSPI, &bar->dummyByte, 1, 100);
+	if(HAL_SPI_Receive(bar->pHSPI, dataR, length, 100) != HAL_OK)
+		return HAL_ERROR;
+	HAL_GPIO_WritePin(bar->pSPI_GPIO_PORT, bar->pSPI_GPIO_PIN, GPIO_PIN_SET);
+	return HAL_OK;
+}
+
+HAL_StatusTypeDef BMP390_SPI_READ_REG(BMP390_SPI* bar, uint8_t *dataT, uint8_t *dataR) {
+	uint8_t dataTRead = *dataT;
+	dataTRead |= BMP390_SPI_READ_MASK;
+
+	HAL_GPIO_WritePin(bar->pSPI_GPIO_PORT, bar->pSPI_GPIO_PIN, GPIO_PIN_RESET);
+
+	HAL_SPI_Transmit(bar->pHSPI, &dataTRead, 1, 100);
+	HAL_SPI_Transmit(bar->pHSPI, &bar->dummyByte, 1, 100);
+	if(HAL_SPI_Receive(bar->pHSPI, dataR, 1, 100) != HAL_OK)
+		return HAL_ERROR;
+	HAL_GPIO_WritePin(bar->pSPI_GPIO_PORT, bar->pSPI_GPIO_PIN, GPIO_PIN_SET);
+
+	return HAL_OK;
+}
+
+HAL_StatusTypeDef BMP390_SPI_WRITE_REG(BMP390_SPI* bar, uint8_t *dataReg, uint8_t* dataToWrite) {
+	uint8_t buf[2];
+	buf[0] = *dataReg & BMP390_SPI_WRITE_MASK;
+	buf[1] = *dataToWrite;
+	HAL_GPIO_WritePin(bar->pSPI_GPIO_PORT, bar->pSPI_GPIO_PIN, GPIO_PIN_RESET);
+	if(HAL_SPI_Transmit(bar->pHSPI, &buf[0], 1, 100)!= HAL_OK)
+		return HAL_ERROR;
+	if(HAL_SPI_Transmit(bar->pHSPI, &buf[1], 1, 100) != HAL_OK)
+		return HAL_ERROR;
+	HAL_GPIO_WritePin(bar->pSPI_GPIO_PORT, bar->pSPI_GPIO_PIN, GPIO_PIN_SET);
+	return HAL_OK;
+}
+

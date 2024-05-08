@@ -1,0 +1,15 @@
+9-DOF IMU:
+	Manufacture: Adafruit
+	Module: 4517
+	Gyro/Accelerometer models: LSM6DSOX
+	Magnetometer model: LIS3MDL
+	
+Air Pressure Model:
+	Manufacture: Adafruit
+	Module:
+	Air Pressure IC: Bosch BMP390
+
+GPS:
+	Manufacture: Adafruit
+	Module: 746
+	GPS Module: PA1616S
