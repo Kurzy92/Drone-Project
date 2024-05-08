@@ -9,11 +9,6 @@
  * Calculations are based on the calculations as they were implemented
  * in Bosch's official drivers.
  *
- * Things to add in the future:
- *   I2C support.
- *   Modifying read/write functions to support both SPI and I2C.
- *   Add testing functionality.
- *
  * @date Created on: Apr 29, 2024
  * @author eyalk
  */

@@ -1,59 +1,43 @@
-19:33:52 **** Incremental Build of configuration Debug for project Drone_Project ****
+22:03:37 **** Incremental Build of configuration Debug for project Drone_Project ****
 make -j24 all 
 arm-none-eabi-gcc "../Sensors_Drivers/BMP3XX/Src/bmp390.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F746xx -DARM_MATH_CM7 -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -I../Middlewares/ST/ARM/DSP/Inc -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LIS3MDL/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/LSM6DSOX/Inc" -I"C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/ESC/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Sensors_Drivers/BMP3XX/Src/bmp390.d" -MT"Sensors_Drivers/BMP3XX/Src/bmp390.o" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -o "Sensors_Drivers/BMP3XX/Src/bmp390.o"
-In file included from ../Sensors_Drivers/BMP3XX/Src/bmp390.c:8:
+In file included from ../Sensors_Drivers/BMP3XX/Src/bmp390.c:16:
 ../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'set_drone_settings':
 C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
    23 | #define BMP390_ERROR    255
       |                         ^~~
-../Sensors_Drivers/BMP3XX/Src/bmp390.c:94:17: note: in expansion of macro 'BMP390_ERROR'
-   94 |                 BMP390_ERROR;
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:165:17: note: in expansion of macro 'BMP390_ERROR'
+  165 |                 BMP390_ERROR;
       |                 ^~~~~~~~~~~~
 C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
    23 | #define BMP390_ERROR    255
       |                         ^~~
-../Sensors_Drivers/BMP3XX/Src/bmp390.c:102:17: note: in expansion of macro 'BMP390_ERROR'
-  102 |                 BMP390_ERROR;
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:173:17: note: in expansion of macro 'BMP390_ERROR'
+  173 |                 BMP390_ERROR;
       |                 ^~~~~~~~~~~~
 C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
    23 | #define BMP390_ERROR    255
       |                         ^~~
-../Sensors_Drivers/BMP3XX/Src/bmp390.c:109:17: note: in expansion of macro 'BMP390_ERROR'
-  109 |                 BMP390_ERROR;
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:180:17: note: in expansion of macro 'BMP390_ERROR'
+  180 |                 BMP390_ERROR;
       |                 ^~~~~~~~~~~~
 C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:23:25: warning: statement with no effect [-Wunused-value]
    23 | #define BMP390_ERROR    255
       |                         ^~~
-../Sensors_Drivers/BMP3XX/Src/bmp390.c:116:17: note: in expansion of macro 'BMP390_ERROR'
-  116 |                 BMP390_ERROR;
+../Sensors_Drivers/BMP3XX/Src/bmp390.c:187:17: note: in expansion of macro 'BMP390_ERROR'
+  187 |                 BMP390_ERROR;
       |                 ^~~~~~~~~~~~
-../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'BMP390_Get_Altitude':
-../Sensors_Drivers/BMP3XX/Src/bmp390.c:157:17: warning: unused variable 'altitude' [-Wunused-variable]
-  157 |         int64_t altitude = 44330 * (1 - pow((float)(pressure/PRESSURE_SEA_LEVEL_PA), 1/5.255));
-      |                 ^~~~~~~~
-C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h: At top level:
-C:/Embedded/Drone_Project/Drone_Project/Sensors_Drivers/BMP3XX/Inc/bmp390.h:317:16: warning: 'BMP390_coeff_calibration' declared 'static' but never defined [-Wunused-function]
-  317 | static uint8_t BMP390_coeff_calibration(BMP390_SPI* bar, BMP390_calibData_t preCalibData); // to be used only inside Init function.
-      |                ^~~~~~~~~~~~~~~~~~~~~~~~
-../Sensors_Drivers/BMP3XX/Src/bmp390.c: In function 'BMP390_Get_Altitude':
-../Sensors_Drivers/BMP3XX/Src/bmp390.c:158:1: warning: control reaches end of non-void function [-Wreturn-type]
-  158 | }
-      | ^
-../Sensors_Drivers/BMP3XX/Src/bmp390.c: At top level:
-../Sensors_Drivers/BMP3XX/Src/bmp390.c:146:16: warning: 'BMP390_get_data_status' defined but not used [-Wunused-function]
-  146 | static uint8_t BMP390_get_data_status(BMP390_SPI*  bar) {
-      |                ^~~~~~~~~~~~~~~~~~~~~~
 arm-none-eabi-gcc -o "Drone_Project.elf" @"objects.list"   -mcpu=cortex-m7 -T"C:\Embedded\Drone_Project\Drone_Project\STM32F746ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Drone_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: Drone_Project.elf
  
 arm-none-eabi-size  Drone_Project.elf 
 arm-none-eabi-objdump -h -S Drone_Project.elf  > "Drone_Project.list"
    text	   data	    bss	    dec	    hex	filename
-  36388	    432	   3864	  40684	   9eec	Drone_Project.elf
+  36372	    432	   3864	  40668	   9edc	Drone_Project.elf
 Finished building: default.size.stdout
  
 Finished building: Drone_Project.list
  
 
-19:33:53 Build Finished. 0 errors, 8 warnings. (took 866ms)
+22:03:38 Build Finished. 0 errors, 4 warnings. (took 846ms)
 

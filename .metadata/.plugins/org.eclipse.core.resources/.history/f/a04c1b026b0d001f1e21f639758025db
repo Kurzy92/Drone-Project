@@ -1,53 +1,13 @@
-/**
- * @file bmp390.c
- * @brief Implementation of driver functions for BMP390 sensor.
+/*
+ * bmp390.c
  *
- * Provides initialization and utility functions for reading and
- * writing BMP390 sensor registers over SPI, compensating sensor data,
- * and configuring the sensor settings suitable for drone applications.
- *
- * Calculations are based on the calculations as they were implemented
- * in Bosch's official drivers.
- *
- * Things to add in the future:
- *   I2C support.
- *   Modifying read/write functions to support both SPI and I2C.
- *   Add testing functionality.
- *
- * @date Created on: Apr 29, 2024
- * @author eyalk
+ *  Created on: Apr 29, 2024
+ *      Author: eyalk
  */
 
 #include "bmp390.h"
 
 
-static uint8_t BMP390_Init(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
-static uint8_t BMP390_compensate_temperature(BMP390_SPI* bar, BMP390_data_t* uncomp_data, int64_t* temperature);
-static uint8_t BMP390_compensate_pressure(BMP390_SPI* bar, BMP390_data_t* uncomp_data, uint64_t* pressure);
-static uint8_t BMP390_get_coeffs(BMP390_SPI* bar);
-static uint8_t BMP390_set_calibs(BMP390_SPI* bar, uint8_t* reg_data);
-static uint8_t perform_soft_reset(BMP390_SPI* bar);
-static void store_SPI_intf(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN);
-static uint8_t parse_sensor_data(uint8_t* dataArr, BMP390_data_t* uncomp_data);
-static uint8_t get_comp_data(BMP390_SPI* bar, BMP390_data_t* uncomp_data, BMP390_data_t* comp_data);
-static uint8_t set_drone_settings(BMP390_SPI* bar);
-static uint8_t set_normal_mode(BMP390_SPI* bar);
-static uint64_t BMP390_get_pressure(BMP390_SPI*  bar);
-
-
-/**
- * @brief Initializes the BMP390 sensor and verifies its identity.
- *
- * This function performs initial configuration of the BMP390 sensor,
- * including a soft reset, reading the calibration coefficients, and
- * setting the sensor to normal operation mode.
- *
- * @param bar Pointer to BMP390_SPI structure.
- * @param pHSPI Pointer to SPI_HandleTypeDef, handler for SPI communication.
- * @param CS_PORT GPIO_TypeDef pointer for the chip select port.
- * @param CS_PIN Chip select pin number.
- * @return uint8_t Status of initialization (BMP390_OK or BMP390_ERROR).
- */
 static uint8_t BMP390_Init(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN) {
 	// Store SPI Interface related data
 	store_SPI_intf(bar, pHSPI, CS_PORT, CS_PIN);
@@ -77,17 +37,6 @@ static uint8_t BMP390_Init(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeD
 	return BMP390_OK;
 }
 
-/**
- * @brief Starts the sensor and checks if it initializes correctly.
- *
- * This function attempts to initialize the sensor. If successful,
- * it sets the initSuccess flag in the BMP390_SPI structure.
- *
- * @param bar Pointer to BMP390_SPI structure.
- * @param pHSPI Pointer to SPI_HandleTypeDef, handler for SPI communication.
- * @param CS_PORT GPIO_TypeDef pointer for the chip select port.
- * @param CS_PIN Chip select pin number.
- */
 void BMP390_START(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN) {
 	bar->initSuccess = BMP390_ERROR;
 	if(BMP390_Init(bar, pHSPI, CS_PORT, CS_PIN) == BMP390_OK) {
@@ -95,15 +44,6 @@ void BMP390_START(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_P
 	}
 }
 
-
-/**
- * @brief Stores the SPI interface parameters in the BMP390_SPI structure.
- *
- * @param bar Pointer to BMP390_SPI structure.
- * @param pHSPI Pointer to SPI_HandleTypeDef, handler for SPI communication.
- * @param CS_PORT GPIO_TypeDef pointer for the chip select port.
- * @param CS_PIN Chip select pin number.
- */
 static void store_SPI_intf(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeDef * CS_PORT, uint8_t CS_PIN) {
 	bar->pHSPI = pHSPI;
 	bar->pSPI_GPIO_PORT = CS_PORT;
@@ -111,12 +51,6 @@ static void store_SPI_intf(BMP390_SPI* bar, SPI_HandleTypeDef* pHSPI, GPIO_TypeD
 	bar->dummyByte = 1;
 }
 
-/**
- * @brief Sets the BMP390 sensor to normal mode after ensuring it is in sleep mode.
- *
- * @param bar Pointer to BMP390_SPI structure.
- * @return uint8_t Status of operation (BMP390_OK or BMP390_ERROR).
- */
 static uint8_t set_normal_mode(BMP390_SPI* bar) {
 	// Check if sleep mode is on, if not, switch to sleep mode.
 	uint8_t dataAdr = BMP390_ADR_PWR_CTRL;
@@ -153,16 +87,6 @@ static uint8_t set_normal_mode(BMP390_SPI* bar) {
 	return BMP390_OK;
 }
 
-/**
- * @brief Configures the sensor with settings optimized for drone use.
- *
- * This includes setting the output data rate and oversampling rates for
- * pressure and temperature measurements, as well as configuring interrupt
- * settings.
- *
- * @param bar Pointer to BMP390_SPI structure.
- * @return uint8_t Status of setting drone-specific configurations (BMP390_OK or BMP390_ERROR).
- */
 static uint8_t set_drone_settings(BMP390_SPI* bar) {
 	uint8_t dataAdr = BMP390_ADR_ODR;
 	uint8_t dataWrite = BMP390_ODR_HZ_50;
@@ -196,12 +120,6 @@ static uint8_t set_drone_settings(BMP390_SPI* bar) {
 	return BMP390_OK;
 }
 
-/**
- * @brief Performs a software reset of the BMP390 sensor.
- *
- * @param bar Pointer to BMP390_SPI structure.
- * @return uint8_t Status of the soft reset (BMP390_OK or BMP390_ERROR).
- */
 static uint8_t perform_soft_reset(BMP390_SPI* bar) {
 	uint8_t regAdr = BMP390_ADR_STATUS;
 	uint8_t regData;
@@ -225,31 +143,20 @@ static uint8_t perform_soft_reset(BMP390_SPI* bar) {
 	return BMP390_OK;
 }
 
-/**
- * @brief Calculates the altitude based on the measured pressure.
- *
- * This function uses the barometric formula to calculate the altitude from the
- * measured pressure. It assumes a standard sea level pressure for the calculation.
- *
- * @param bar Pointer to BMP390_SPI structure containing the sensor's operational context.
- * @return uint64_t Calculated altitude in meters.
- */
+static uint8_t BMP390_get_data_status(BMP390_SPI*  bar) {
+	uint8_t dataADR = (uint8_t)BMP390_ADR_STATUS;
+	uint8_t statusREG = 0;
+	BMP390_SPI_READ_REG(bar, &dataADR, &statusREG);
+	if(statusREG != 0x70)
+		return BMP390_ERROR;
+	return BMP390_OK;
+}
+
 uint64_t BMP390_Get_Altitude(BMP390_SPI* bar) {
 	uint64_t pressure = BMP390_get_pressure(bar);
 	int64_t altitude = 44330 * (1 - pow((float)(pressure/PRESSURE_SEA_LEVEL_PA), 1/5.255));
-	return altitude;
 }
 
-
-/**
- * @brief Retrieves the current pressure measurement from the BMP390 sensor.
- *
- * This function reads the pressure data registers, parses the data, compensates it using
- * the calibration data, and then returns the compensated pressure.
- *
- * @param bar Pointer to BMP390_SPI structure containing the sensor's operational context.
- * @return uint64_t Compensated pressure value.
- */
 static uint64_t BMP390_get_pressure(BMP390_SPI*  bar) {
 	if(bar->initSuccess != BMP390_OK)
 		return 0;
@@ -276,18 +183,6 @@ static uint64_t BMP390_get_pressure(BMP390_SPI*  bar) {
 	return comp_data.pressure;
 }
 
-
-/**
- * @brief Compensates the sensor data based on the calibration coefficients.
- *
- * The function applies compensation formulas for both pressure and temperature
- * using the calibration data loaded into the BMP390_SPI structure.
- *
- * @param bar Pointer to BMP390_SPI structure.
- * @param uncomp_data Pointer to the structure holding raw sensor data.
- * @param comp_data Pointer to the structure where compensated data will be stored.
- * @return uint8_t Status of the data compensation (BMP390_OK or error code).
- */
 static uint8_t get_comp_data(BMP390_SPI* bar, BMP390_data_t* uncomp_data, BMP390_data_t* comp_data) {
 
 	BMP390_compensate_temperature(bar, uncomp_data, &comp_data->temperature);
@@ -297,17 +192,6 @@ static uint8_t get_comp_data(BMP390_SPI* bar, BMP390_data_t* uncomp_data, BMP390
 	return BMP390_OK;
 }
 
-
-/**
- * @brief Parses the raw sensor data from the BMP390.
- *
- * This function interprets the raw data bytes from the sensor and converts them into
- * usable uncompressed data values for pressure and temperature.
- *
- * @param dataArr Array of raw data bytes read from the sensor.
- * @param uncomp_data Pointer to the structure where the parsed data will be stored.
- * @return uint8_t Status of the parsing operation (BMP390_OK or error code).
- */
 static uint8_t parse_sensor_data(uint8_t* dataArr, BMP390_data_t* uncomp_data) {
 	uint32_t  dataXLSB;
 	uint32_t  dataLSB;
@@ -328,17 +212,6 @@ static uint8_t parse_sensor_data(uint8_t* dataArr, BMP390_data_t* uncomp_data) {
 	return BMP390_OK;
 }
 
-
-/**
- * @brief Retrieves calibration coefficients from the BMP390 sensor.
- *
- * This function reads the calibration data from the BMP390 sensor necessary for
- * compensating the raw sensor output. The coefficients are essential for accurate
- * measurements and are stored in the BMP390_SPI structure for future calculations.
- *
- * @param bar Pointer to the BMP390_SPI structure.
- * @return uint8_t Returns BMP390_OK if the operation was successful, otherwise returns BMP390_ERROR.
- */
 static uint8_t BMP390_get_coeffs(BMP390_SPI* bar) {
 	uint8_t dataFirstADR =  BMP390_ADR_FIRST_CALIB_COEFF;
 	uint8_t calib_coeffs[BMP390_CALIB_COEFF_SIZE] = {0};
@@ -349,19 +222,6 @@ static uint8_t BMP390_get_coeffs(BMP390_SPI* bar) {
 	return BMP390_OK;
 }
 
-
-/**
- * @brief Stores the calibration coefficients in the BMP390_SPI structure.
- *
- * Parses and stores the calibration data received from the BMP390 sensor into
- * the BMP390_SPI structure. This data is critical for compensating the raw
- * sensor data.
- *
- * @param bar Pointer to the BMP390_SPI structure. calibration coefficients are stored
- * in bar->calib_coeffs.
- * @param reg_data Array containing the raw calibration data read from the sensor.
- * @return uint8_t Returns BMP390_OK if the calibration data was stored successfully, otherwise returns BMP390_ERROR.
- */
 static uint8_t BMP390_set_calibs(BMP390_SPI* bar, uint8_t* reg_data) {
 	BMP390_calibData_t* cD = &bar->calib_coeffs;
 	cD->t1 = BMP390_CONCAT_BYTES(reg_data[1], reg_data[0]);
@@ -381,20 +241,16 @@ static uint8_t BMP390_set_calibs(BMP390_SPI* bar, uint8_t* reg_data) {
 	return BMP390_OK;
 }
 
-
-/**
- * @brief Compensates the raw temperature data based on the BMP390 calibration coefficients.
+/*
+ * This function calculates the temperature in C, and updates it in comp_data.
+ * @bar - a pointer to the BMP390_SPI struct.
+ * @uncomp_data - a struct that holds the parsed data registers for both the
+ *    					  temperature and the pressure as extracted from the sensor registers.
+ * @comp_data - a struct that holds the compensated temperature & pressure data.
+ * This function is mostly taken from the official drivers
  *
- * This function applies a multi-step calculation process to adjust the raw temperature data using
- * the calibration coefficients stored in the BMP390_SPI structure. This method enhances the accuracy
- * of the temperature readings.
- *
- * @param bar Pointer to the BMP390_SPI structure containing calibration data.
- * @param uncomp_data Pointer to structure holding raw sensor data.
- * @param temperature Pointer to store the compensated temperature value.
- * @return int64_t Returns BMP390_OK if the temperature is successfully compensated, otherwise returns an error code.
  */
-static uint8_t BMP390_compensate_temperature(BMP390_SPI* bar, BMP390_data_t* uncomp_data, int64_t* temperature) {
+static int64_t BMP390_compensate_temperature(BMP390_SPI* bar, BMP390_data_t* uncomp_data, int64_t* temperature) {
 	int64_t partial_data1;
 	int64_t partial_data2;
 	int64_t partial_data3;
@@ -424,24 +280,12 @@ static uint8_t BMP390_compensate_temperature(BMP390_SPI* bar, BMP390_data_t* unc
         comp_temp = BMP390_MAX_TEMP_INT;
     }
 
-    (*temperature) = comp_temp/10 + BMP390_TEMP_OFFSET_VAL;
+    (*temperature) = comp_temp/10 + 17;
     return BMP390_OK;
 }
 
 
-/**
- * @brief Compensates the raw pressure data based on the BMP390 calibration coefficients.
- *
- * This function applies a complex formula to compensate the raw pressure measurements
- * using the calibration data stored in the BMP390_SPI structure. This results in a
- * highly accurate pressure value that considers temperature and calibration offsets.
- *
- * @param bar Pointer to BMP390_SPI structure containing calibration data and sensor configuration.
- * @param uncomp_data Pointer to structure holding raw sensor data.
- * @param pressure Pointer to store the compensated pressure value.
- * @return uint8_t Returns BMP390_OK if the pressure is successfully compensated, otherwise returns an error code.
- */
-static uint8_t BMP390_compensate_pressure(BMP390_SPI* bar, BMP390_data_t* uncomp_data, uint64_t* pressure) {
+static uint64_t BMP390_compensate_pressure(BMP390_SPI* bar, BMP390_data_t* uncomp_data, uint64_t* pressure) {
 	/* Variable to store the compensated pressure */
     BMP390_calibData_t *reg_calib_data = &bar->calib_coeffs;
     int64_t partial_data1;
@@ -499,19 +343,6 @@ static uint8_t BMP390_compensate_pressure(BMP390_SPI* bar, BMP390_data_t* uncomp
     return BMP390_OK;
 }
 
-
-/**
- * @brief Reads multiple registers from the BMP390 sensor over SPI.
- *
- * This function initiates the SPI communication, sends the register address,
- * and reads the specified number of bytes from the BMP390 sensor.
- *
- * @param bar Pointer to BMP390_SPI structure containing the SPI configuration.
- * @param dataT Pointer to the first register address to read.
- * @param dataR Buffer to store the read data.
- * @param length Number of bytes to read.
- * @return HAL_StatusTypeDef HAL status code that indicates if the read operation was successful.
- */
 HAL_StatusTypeDef BMP390_SPI_READ_MULTIPLE_REGS(BMP390_SPI* bar, uint8_t *dataT, uint8_t *dataR, uint8_t length) {
 	uint8_t dataTRead = *dataT | BMP390_SPI_READ_MASK;
 
@@ -524,17 +355,6 @@ HAL_StatusTypeDef BMP390_SPI_READ_MULTIPLE_REGS(BMP390_SPI* bar, uint8_t *dataT,
 	return HAL_OK;
 }
 
-
-/**
- * @brief Reads a single register from the BMP390 sensor over SPI.
- *
- * Manages the chip select line, sends the register address, and reads back a single byte.
- *
- * @param bar Pointer to BMP390_SPI structure containing the SPI configuration.
- * @param dataT Pointer to the register address to read.
- * @param dataR Buffer to store the read data.
- * @return HAL_StatusTypeDef HAL status code that indicates if the read operation was successful.
- */
 HAL_StatusTypeDef BMP390_SPI_READ_REG(BMP390_SPI* bar, uint8_t *dataT, uint8_t *dataR) {
 	uint8_t dataTRead = *dataT;
 	dataTRead |= BMP390_SPI_READ_MASK;
@@ -550,17 +370,6 @@ HAL_StatusTypeDef BMP390_SPI_READ_REG(BMP390_SPI* bar, uint8_t *dataT, uint8_t *
 	return HAL_OK;
 }
 
-
-/**
- * @brief Writes to a register of the BMP390 sensor over SPI.
- *
- * Manages the chip select line, sends the register address and data, ensuring the write operation is successful.
- *
- * @param bar Pointer to BMP390_SPI structure containing the SPI configuration.
- * @param dataReg Pointer to the register address to write to.
- * @param dataToWrite Pointer to the data to write to the register.
- * @return HAL_StatusTypeDef HAL status code that indicates if the write operation was successful.
- */
 HAL_StatusTypeDef BMP390_SPI_WRITE_REG(BMP390_SPI* bar, uint8_t *dataReg, uint8_t* dataToWrite) {
 	uint8_t buf[2];
 	buf[0] = *dataReg & BMP390_SPI_WRITE_MASK;
